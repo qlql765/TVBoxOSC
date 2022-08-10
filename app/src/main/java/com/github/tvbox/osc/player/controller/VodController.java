@@ -126,6 +126,11 @@ public class VodController extends BaseController {
     float mSpeed;
     Drawable dPlay = getResources().getDrawable(R.drawable.play_play);
     Drawable dFFwd = getResources().getDrawable(R.drawable.play_ffwd);
+    
+    // q215613905 闲置多少毫秒关闭底栏
+    Handler myHandle;
+    Runnable myRunnable;
+    int myHandleSeconds = 6000;//闲置多少毫秒秒关闭底栏  默认6秒
 
     @Override
     protected void initView() {
@@ -153,6 +158,15 @@ public class VodController extends BaseController {
         mPlayerFFwd = findViewById(R.id.play_ff);
 
         mBottomRoot.setVisibility(INVISIBLE);
+        
+        // q215613905 闲置多少毫秒关闭底栏
+        myHandle=new Handler();
+        myRunnable = new Runnable() {
+            @Override
+            public void run() {
+                hideBottom();
+            }
+        };
 
         mGridView.setLayoutManager(new V7LinearLayoutManager(getContext(), 0, false));
         ParseAdapter parseAdapter = new ParseAdapter();
@@ -228,6 +242,8 @@ public class VodController extends BaseController {
         mPlayerScaleBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                myHandle.removeCallbacks(myRunnable);
+                myHandle.postDelayed(myRunnable, myHandleSeconds);
                 try {
                     int scaleType = mPlayerConfig.getInt("sc");
                     scaleType++;
@@ -245,6 +261,8 @@ public class VodController extends BaseController {
         mPlayerSpeedBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                myHandle.removeCallbacks(myRunnable);
+                myHandle.postDelayed(myRunnable, myHandleSeconds);
                 try {
                     float speed = (float) mPlayerConfig.getDouble("sp");
                     speed += 0.25f;
@@ -337,6 +355,8 @@ public class VodController extends BaseController {
         mPlayerTimeStartBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                myHandle.removeCallbacks(myRunnable);
+                myHandle.postDelayed(myRunnable, myHandleSeconds);
                 try {
                     int step = Hawk.get(HawkConfig.PLAY_TIME_STEP, 5);
                     int st = mPlayerConfig.getInt("st");
@@ -368,6 +388,8 @@ public class VodController extends BaseController {
         mPlayerTimeSkipBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                myHandle.removeCallbacks(myRunnable);
+                myHandle.postDelayed(myRunnable, myHandleSeconds);
                 try {
                     int step = Hawk.get(HawkConfig.PLAY_TIME_STEP, 5);
                     int et = mPlayerConfig.getInt("et");
@@ -399,6 +421,8 @@ public class VodController extends BaseController {
         mPlayerTimeStepBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                myHandle.removeCallbacks(myRunnable);
+                myHandle.postDelayed(myRunnable, myHandleSeconds);
                 int step = Hawk.get(HawkConfig.PLAY_TIME_STEP, 5);
                 step += 5;
                 if (step > 30) {
@@ -669,8 +693,10 @@ public class VodController extends BaseController {
                 }
 //            } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {   // takagen99 : Up to show
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN || keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+                myHandle.removeCallbacks(myRunnable);
                 if (!isBottomVisible()) {
                     showBottom();
+                    myHandle.postDelayed(myRunnable, myHandleSeconds);
                     return true;
                 }
             }
@@ -687,8 +713,11 @@ public class VodController extends BaseController {
 
     @Override
     public boolean onSingleTapConfirmed(MotionEvent e) {
+        myHandle.removeCallbacks(myRunnable);
         if (!isBottomVisible()) {
             showBottom();
+            // 闲置计时关闭
+            myHandle.postDelayed(myRunnable, myHandleSeconds);
         } else {
             hideBottom();
         }
