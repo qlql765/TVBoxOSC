@@ -120,6 +120,7 @@ public class VodController extends BaseController {
     TextView mPlayerTimeStartBtn;
     TextView mPlayerTimeSkipBtn;
     TextView mPlayerTimeStepBtn;
+    TextView mDate;
 
     // takagen99 : Added for Fast Forward Button
     TextView mPlayerFFwd;
@@ -156,6 +157,7 @@ public class VodController extends BaseController {
         mPlayerTimeSkipBtn = findViewById(R.id.play_time_end);
         mPlayerTimeStepBtn = findViewById(R.id.play_time_step);
         mPlayerFFwd = findViewById(R.id.play_ff);
+        mDate = findViewById(R.id.tv_date);
 
         mBottomRoot.setVisibility(INVISIBLE);
         
@@ -165,6 +167,20 @@ public class VodController extends BaseController {
             @Override
             public void run() {
                 hideBottom();
+            }
+        };
+        
+        //播放界面增加当前时间
+        mHandler = new Handler();
+        myRunnable = new Runnable() {
+            @SuppressLint({"DefaultLocale", "SetTextI18n"})
+            @Override
+            public void run() {
+                Date datetime = new Date();
+                @SuppressLint("SimpleDateFormat")
+                SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+                mDate.setText(dateFormat.format(datetime));
+                mHandler.postDelayed(this, 1000);
             }
         };
 
