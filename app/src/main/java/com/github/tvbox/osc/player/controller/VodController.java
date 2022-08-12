@@ -34,6 +34,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.util.PlayerUtils;
@@ -170,14 +172,12 @@ public class VodController extends BaseController {
             }
         };
         
-        //播放界面增加当前时间
+        //开始播放界面增加当前时间
         mHandler = new Handler();
         myRunnable = new Runnable() {
-            @SuppressLint({"DefaultLocale", "SetTextI18n"})
             @Override
             public void run() {
                 Date datetime = new Date();
-                @SuppressLint("SimpleDateFormat")
                 SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
                 mDate.setText(dateFormat.format(datetime));
                 mHandler.postDelayed(this, 1000);
